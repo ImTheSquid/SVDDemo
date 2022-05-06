@@ -117,14 +117,18 @@ struct ContentView: View {
                 image = nil
                 imageData = nil
             }
+            .disabled(isCalculatingMode)
             .font(.body)
             
             Text("Dimensions: \(Int(image.size.width))x\(Int(image!.size.height))")
             
-            Text("Approximate Full Size: \(Double(image.size.width * image.size.height) / 1000000.0) MB")
+            let full = Double(image.size.width * image.size.height)
+            Text("Approximate Full Size: \(full / 1000000.0) MB")
             
             // Size of two matrices (width x modes, height x modes) plus number of values on diagonal (modes)
-            Text("Maximum Mode Size: \(Double(modes * (Float(image.size.width) + Float(image.size.height) + 1)) / 1000000.0) MB")
+            let maxMode = Double(modes * (Float(image.size.width) + Float(image.size.height) + 1))
+            let sign = maxMode / full >= 1 ? "+" : "-"
+            Text("Maximum Mode Size: \(maxMode / 1000000.0) MB") + Text(" (\(sign)\(abs(100 - Int(maxMode / full * 100.0)))%)").foregroundColor(maxMode / full >= 1 ? Color.red : Color.green)
             
             HStack {
                 Text("Modes: \(Int(modes))")
